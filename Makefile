@@ -1,4 +1,4 @@
-.PHONY: help install dev build clean backend frontend build-embedded build-linux build-windows build-mac build-all release package test test-backend test-frontend coverage coverage-backend coverage-frontend lint lint-backend lint-frontend lint-fix fmt
+.PHONY: help install dev build clean backend frontend build-embedded build-linux build-windows build-mac build-all release package test test-backend test-frontend coverage coverage-backend coverage-frontend coverage-text lint lint-backend lint-frontend lint-fix fmt ci
 
 # 应用信息
 APP_NAME = browserwing
@@ -56,6 +56,7 @@ help:
 	@echo "  make coverage             - 运行测试覆盖率"
 	@echo "  make coverage-backend     - 后端测试覆盖率"
 	@echo "  make coverage-frontend    - 前端测试覆盖率"
+	@echo "  make coverage-text        - 输出文本格式覆盖率报告"
 	@echo ""
 	@echo "$(COLOR_GREEN)代码检查:$(COLOR_RESET)"
 	@echo "  make lint                 - 运行代码检查"
@@ -275,6 +276,23 @@ coverage-frontend:
 	@echo "$(COLOR_YELLOW)📊 运行前端测试覆盖率...$(COLOR_RESET)"
 	@cd $(FRONTEND_DIR) && pnpm test:coverage
 	@echo "$(COLOR_GREEN)✓ 前端覆盖率报告: $(FRONTEND_DIR)/coverage/$(COLOR_RESET)"
+
+# 文本格式覆盖率报告 (适用于 CI/CD)
+coverage-text:
+	@echo "$(COLOR_YELLOW)📊 生成文本格式覆盖率报告...$(COLOR_RESET)"
+	@echo ""
+	@echo "$(COLOR_BLUE)=== 后端覆盖率 ===$(COLOR_RESET)"
+	@cd $(BACKEND_DIR) && go test -coverprofile=coverage.out -covermode=atomic ./... 2>/dev/null
+	@cd $(BACKEND_DIR) && go tool cover -func=coverage.out | tail -1
+	@echo ""
+	@echo "$(COLOR_BLUE)=== 前端覆盖率 ===$(COLOR_RESET)"
+	@cd $(FRONTEND_DIR) && pnpm test:coverage --reporter=text 2>/dev/null || true
+	@echo ""
+	@echo "$(COLOR_GREEN)✓ 文本格式覆盖率报告生成完成$(COLOR_RESET)"
+
+# CI 命令 (用于 GitHub Actions)
+ci: lint test coverage-text
+	@echo "$(COLOR_GREEN)✅ CI 检查完成$(COLOR_RESET)"
 
 # 代码检查 (lint)
 lint:
