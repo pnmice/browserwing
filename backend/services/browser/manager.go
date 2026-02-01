@@ -1685,7 +1685,7 @@ func (m *Manager) startInstanceInternal(ctx context.Context, instanceID string) 
 		if err == nil {
 			downloadPath = absDownloadPath + "/downloads"
 		}
-		os.MkdirAll(downloadPath, 0o755)
+		_ = os.MkdirAll(downloadPath, 0o755)
 		m.downloadPath = downloadPath
 		m.recorder.SetDownloadPath(downloadPath)
 	}

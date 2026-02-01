@@ -2230,7 +2230,7 @@ func (p *Player) executeKeyboard(ctx context.Context, page *rod.Page, action mod
 			}
 			err = keyboard.Type(input.KeyA)
 			if err != nil {
-				keyboard.Release(input.ControlLeft)
+				_ = keyboard.Release(input.ControlLeft)
 				return fmt.Errorf("failed to press A: %w", err)
 			}
 			err = keyboard.Release(input.ControlLeft)
@@ -2260,7 +2260,7 @@ func (p *Player) executeKeyboard(ctx context.Context, page *rod.Page, action mod
 			}
 			err = keyboard.Type(input.KeyC)
 			if err != nil {
-				keyboard.Release(input.ControlLeft)
+				_ = keyboard.Release(input.ControlLeft)
 				return fmt.Errorf("failed to press C: %w", err)
 			}
 			err = keyboard.Release(input.ControlLeft)
@@ -2312,7 +2312,7 @@ func (p *Player) executeKeyboard(ctx context.Context, page *rod.Page, action mod
 				}
 				err = keyboard.Type(input.KeyV)
 				if err != nil {
-					keyboard.Release(input.MetaLeft)
+					_ = keyboard.Release(input.MetaLeft)
 					return fmt.Errorf("failed to press V: %w", err)
 				}
 				err = keyboard.Release(input.MetaLeft)
@@ -2540,7 +2540,7 @@ func (p *Player) executeKeyboard(ctx context.Context, page *rod.Page, action mod
 			}
 			err = keyboard.Type(input.KeyV)
 			if err != nil {
-				keyboard.Release(input.ControlLeft)
+				_ = keyboard.Release(input.ControlLeft)
 				return fmt.Errorf("failed to press V: %w", err)
 			}
 			err = keyboard.Release(input.ControlLeft)
