@@ -498,7 +498,6 @@ func (p *Player) StartDownloadListener(ctx context.Context, browser *rod.Browser
 				// 尝试查找类似的文件
 				if actualFile := p.findSimilarFile(fileName); actualFile != "" {
 					fullPath = filepath.Join(p.downloadPath, actualFile)
-					fileName = actualFile
 					logger.Info(ctx, "File was renamed by browser: %s -> %s", downloadMap[e.GUID], actualFile)
 				}
 			}

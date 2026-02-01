@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -195,7 +195,12 @@ func (t *BarkTool) Execute(ctx context.Context, input string) (string, error) {
 		Timeout: 30 * time.Second,
 	}
 
-	resp, err := client.Get(fullURL)
+	req, err := http.NewRequestWithContext(ctx, "GET", fullURL, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to create request: %w", err)
+	}
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("failed to send push request: %w", err)
 	}
@@ -205,7 +210,7 @@ func (t *BarkTool) Execute(ctx context.Context, input string) (string, error) {
 		return "", fmt.Errorf("push request failed with status code: %d", resp.StatusCode)
 	}
 
-	respBody, err := ioutil.ReadAll(resp.Body)
+	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("failed to read response: %w", err)
 	}

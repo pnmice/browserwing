@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -122,7 +121,7 @@ func (t *FileOpsTool) Execute(ctx context.Context, input string) (string, error)
 
 // readFile read file content
 func (t *FileOpsTool) readFile(path string) (string, error) {
-	content, err := ioutil.ReadFile(path)
+	content, err := os.ReadFile(path)
 	if err != nil {
 		return "", fmt.Errorf("failed to read file: %w", err)
 	}
@@ -142,7 +141,7 @@ func (t *FileOpsTool) writeFile(path, content string, overwrite bool) (string, e
 		return "", fmt.Errorf("failed to create directory: %w", err)
 	}
 
-	if err := ioutil.WriteFile(path, []byte(content), 0o644); err != nil {
+	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 		return "", fmt.Errorf("failed to write file: %w", err)
 	}
 
@@ -151,7 +150,7 @@ func (t *FileOpsTool) writeFile(path, content string, overwrite bool) (string, e
 
 // listFiles list files in directory
 func (t *FileOpsTool) listFiles(path string) (string, error) {
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
 		return "", fmt.Errorf("failed to read directory: %w", err)
 	}
@@ -164,7 +163,12 @@ func (t *FileOpsTool) listFiles(path string) (string, error) {
 		if file.IsDir() {
 			result = append(result, fmt.Sprintf("📁 %s", file.Name()))
 		} else {
-			result = append(result, fmt.Sprintf("📄 %s (%d bytes)", file.Name(), file.Size()))
+			info, err := file.Info()
+			if err != nil {
+				result = append(result, fmt.Sprintf("📄 %s", file.Name()))
+			} else {
+				result = append(result, fmt.Sprintf("📄 %s (%d bytes)", file.Name(), info.Size()))
+			}
 		}
 	}
 

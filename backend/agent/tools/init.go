@@ -175,10 +175,6 @@ func (w *ToolWrapper) Run(ctx context.Context, input string) (string, error) {
 		// 保存错误信息
 		GlobalToolResultStore.SetResult(toolName, fmt.Sprintf("Error: %v", err))
 	} else {
-		resultPreview := result
-		if len(resultPreview) > 200 {
-			resultPreview = result[:200] + "..."
-		}
 		// 保存结果到全局存储
 		GlobalToolResultStore.SetResult(toolName, result)
 	}
@@ -199,10 +195,6 @@ func (w *ToolWrapper) Execute(ctx context.Context, input string) (string, error)
 		// 保存错误信息
 		GlobalToolResultStore.SetResult(toolName, fmt.Sprintf("Error: %v", err))
 	} else {
-		resultPreview := result
-		if len(resultPreview) > 200 {
-			resultPreview = result[:200] + "..."
-		}
 		// 保存结果到全局存储
 		GlobalToolResultStore.SetResult(toolName, result)
 	}
