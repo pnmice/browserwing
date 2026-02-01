@@ -88,7 +88,7 @@ func GetAccessibilitySnapshot(ctx context.Context, page *rod.Page) (*Accessibili
 		// 检查 context
 		select {
 		case <-ctx.Done():
-			logger.Info(ctx, "[GetAccessibilitySnapshot] Context cancelled during node conversion at node %d/%d", i, len(axTree.Nodes))
+			logger.Info(ctx, "[GetAccessibilitySnapshot] Context canceled during node conversion at node %d/%d", i, len(axTree.Nodes))
 			return nil, ctx.Err()
 		default:
 		}

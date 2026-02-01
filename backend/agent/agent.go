@@ -1354,7 +1354,7 @@ needTools:
 		select {
 		case <-ctx.Done():
 			// 客户端取消请求，停止处理
-			logger.Info(ctx, "Request cancelled by client, stopping message processing")
+			logger.Info(ctx, "Request canceled by client, stopping message processing")
 			return ctx.Err()
 		case event, ok := <-streamEvents:
 			if !ok {

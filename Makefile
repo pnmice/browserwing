@@ -1,4 +1,4 @@
-.PHONY: help install dev build clean backend frontend build-embedded build-linux build-windows build-mac build-all release package
+.PHONY: help install dev build clean backend frontend build-embedded build-linux build-windows build-mac build-all release package test test-backend test-frontend coverage coverage-backend coverage-frontend coverage-text lint lint-backend lint-frontend lint-fix fmt ci
 
 # 应用信息
 APP_NAME = browserwing
@@ -49,9 +49,23 @@ help:
 	@echo "  make release              - 准备 GitHub Release 文件（直接二进制）"
 	@echo "  make package              - 打包所有平台并生成压缩包"
 	@echo ""
+	@echo "$(COLOR_GREEN)测试命令:$(COLOR_RESET)"
+	@echo "  make test                 - 运行所有测试"
+	@echo "  make test-backend         - 仅运行后端测试"
+	@echo "  make test-frontend        - 仅运行前端测试"
+	@echo "  make coverage             - 运行测试覆盖率"
+	@echo "  make coverage-backend     - 后端测试覆盖率"
+	@echo "  make coverage-frontend    - 前端测试覆盖率"
+	@echo "  make coverage-text        - 输出文本格式覆盖率报告"
+	@echo ""
+	@echo "$(COLOR_GREEN)代码检查:$(COLOR_RESET)"
+	@echo "  make lint                 - 运行代码检查"
+	@echo "  make lint-backend         - 后端代码检查"
+	@echo "  make lint-frontend        - 前端代码检查"
+	@echo "  make lint-fix             - 自动修复代码检查问题"
+	@echo ""
 	@echo "$(COLOR_GREEN)其他命令:$(COLOR_RESET)"
 	@echo "  make clean                - 清理构建文件"
-	@echo "  make test                 - 运行测试"
 	@echo "  make fmt                  - 格式化代码"
 	@echo ""
 	@echo "$(COLOR_YELLOW)自定义端口:$(COLOR_RESET)"
@@ -226,7 +240,85 @@ run: build-embedded
 test:
 	@echo "$(COLOR_YELLOW)🧪 运行测试...$(COLOR_RESET)"
 	@cd $(BACKEND_DIR) && go test -v ./...
+	@cd $(FRONTEND_DIR) && pnpm test
 	@echo "$(COLOR_GREEN)✓ 测试完成$(COLOR_RESET)"
+
+# 仅运行后端测试
+test-backend:
+	@echo "$(COLOR_YELLOW)🧪 运行后端测试...$(COLOR_RESET)"
+	@cd $(BACKEND_DIR) && go test -v ./...
+	@echo "$(COLOR_GREEN)✓ 后端测试完成$(COLOR_RESET)"
+
+# 仅运行前端测试
+test-frontend:
+	@echo "$(COLOR_YELLOW)🧪 运行前端测试...$(COLOR_RESET)"
+	@cd $(FRONTEND_DIR) && pnpm test
+	@echo "$(COLOR_GREEN)✓ 前端测试完成$(COLOR_RESET)"
+
+# 测试覆盖率
+coverage:
+	@echo "$(COLOR_YELLOW)📊 运行测试覆盖率...$(COLOR_RESET)"
+	@cd $(BACKEND_DIR) && go test -coverprofile=coverage.out -covermode=atomic ./...
+	@cd $(BACKEND_DIR) && go tool cover -func=coverage.out
+	@cd $(FRONTEND_DIR) && pnpm test:coverage
+	@echo "$(COLOR_GREEN)✓ 覆盖率报告生成完成$(COLOR_RESET)"
+
+# 后端测试覆盖率
+coverage-backend:
+	@echo "$(COLOR_YELLOW)📊 运行后端测试覆盖率...$(COLOR_RESET)"
+	@cd $(BACKEND_DIR) && go test -coverprofile=coverage.out -covermode=atomic ./...
+	@cd $(BACKEND_DIR) && go tool cover -func=coverage.out
+	@cd $(BACKEND_DIR) && go tool cover -html=coverage.out -o coverage.html
+	@echo "$(COLOR_GREEN)✓ 后端覆盖率报告: $(BACKEND_DIR)/coverage.html$(COLOR_RESET)"
+
+# 前端测试覆盖率
+coverage-frontend:
+	@echo "$(COLOR_YELLOW)📊 运行前端测试覆盖率...$(COLOR_RESET)"
+	@cd $(FRONTEND_DIR) && pnpm test:coverage
+	@echo "$(COLOR_GREEN)✓ 前端覆盖率报告: $(FRONTEND_DIR)/coverage/$(COLOR_RESET)"
+
+# 文本格式覆盖率报告 (适用于 CI/CD)
+coverage-text:
+	@echo "$(COLOR_YELLOW)📊 生成文本格式覆盖率报告...$(COLOR_RESET)"
+	@echo ""
+	@echo "$(COLOR_BLUE)=== 后端覆盖率 ===$(COLOR_RESET)"
+	@cd $(BACKEND_DIR) && go test -coverprofile=coverage.out -covermode=atomic ./... 2>/dev/null
+	@cd $(BACKEND_DIR) && go tool cover -func=coverage.out | tail -1
+	@echo ""
+	@echo "$(COLOR_BLUE)=== 前端覆盖率 ===$(COLOR_RESET)"
+	@cd $(FRONTEND_DIR) && pnpm test:coverage --reporter=text 2>/dev/null || true
+	@echo ""
+	@echo "$(COLOR_GREEN)✓ 文本格式覆盖率报告生成完成$(COLOR_RESET)"
+
+# CI 命令 (用于 GitHub Actions)
+ci: lint test coverage-text
+	@echo "$(COLOR_GREEN)✅ CI 检查完成$(COLOR_RESET)"
+
+# 代码检查 (lint)
+lint:
+	@echo "$(COLOR_YELLOW)🔍 运行代码检查...$(COLOR_RESET)"
+	@cd $(BACKEND_DIR) && golangci-lint run ./...
+	@cd $(FRONTEND_DIR) && pnpm lint
+	@echo "$(COLOR_GREEN)✓ 代码检查完成$(COLOR_RESET)"
+
+# 后端代码检查
+lint-backend:
+	@echo "$(COLOR_YELLOW)🔍 运行后端代码检查...$(COLOR_RESET)"
+	@cd $(BACKEND_DIR) && golangci-lint run ./...
+	@echo "$(COLOR_GREEN)✓ 后端代码检查完成$(COLOR_RESET)"
+
+# 前端代码检查
+lint-frontend:
+	@echo "$(COLOR_YELLOW)🔍 运行前端代码检查...$(COLOR_RESET)"
+	@cd $(FRONTEND_DIR) && pnpm lint
+	@echo "$(COLOR_GREEN)✓ 前端代码检查完成$(COLOR_RESET)"
+
+# 修复代码检查问题
+lint-fix:
+	@echo "$(COLOR_YELLOW)🔧 修复代码检查问题...$(COLOR_RESET)"
+	@cd $(BACKEND_DIR) && golangci-lint run --fix ./...
+	@cd $(FRONTEND_DIR) && pnpm lint:fix
+	@echo "$(COLOR_GREEN)✓ 代码检查问题修复完成$(COLOR_RESET)"
 
 # 格式化代码
 fmt:
@@ -248,6 +340,9 @@ clean:
 	@rm -rf $(BUILD_DIR)/
 	@rm -rf $(DIST_DIR)
 	@rm -rf frontend/dist
+	@rm -rf frontend/coverage
 	@rm -rf backend/data
+	@rm -f backend/coverage.out
+	@rm -f backend/coverage.html
 	@echo "$(COLOR_GREEN)✅ 清理完成！$(COLOR_RESET)"
 

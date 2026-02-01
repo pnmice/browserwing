@@ -385,8 +385,10 @@ func (db *BoltDB) SaveBrowserConfig(config *models.BrowserConfig) error {
 				}
 				if existingConfig.ID != config.ID && existingConfig.IsDefault {
 					existingConfig.IsDefault = false
-					data, _ := json.Marshal(existingConfig)
-					b.Put([]byte(existingConfig.ID), data)
+					data, err := json.Marshal(existingConfig)
+					if err == nil {
+						_ = b.Put([]byte(existingConfig.ID), data)
+					}
 				}
 			}
 		}
@@ -732,7 +734,7 @@ func (b *BoltDB) GetDefaultRecordingConfig() *models.RecordingConfig {
 		// 返回系统默认配置
 		defaultConfig := models.GetDefaultRecordingConfig()
 		// 尝试保存到数据库
-		b.SaveRecordingConfig(defaultConfig)
+		_ = b.SaveRecordingConfig(defaultConfig)
 		return defaultConfig
 	}
 	return config
@@ -1357,8 +1359,10 @@ func (b *BoltDB) SaveBrowserInstance(instance *models.BrowserInstance) error {
 				if existingInstance.ID != instance.ID && existingInstance.IsDefault {
 					existingInstance.IsDefault = false
 					existingInstance.UpdatedAt = time.Now()
-					data, _ := json.Marshal(existingInstance)
-					bucket.Put([]byte(existingInstance.ID), data)
+					data, err := json.Marshal(existingInstance)
+					if err == nil {
+						_ = bucket.Put([]byte(existingInstance.ID), data)
+					}
 				}
 			}
 		}
@@ -1465,8 +1469,10 @@ func (b *BoltDB) UpdateBrowserInstance(id string, instance *models.BrowserInstan
 				if existingInstance.ID != id && existingInstance.IsDefault {
 					existingInstance.IsDefault = false
 					existingInstance.UpdatedAt = time.Now()
-					updatedData, _ := json.Marshal(existingInstance)
-					bucket.Put([]byte(existingInstance.ID), updatedData)
+					updatedData, err := json.Marshal(existingInstance)
+					if err == nil {
+						_ = bucket.Put([]byte(existingInstance.ID), updatedData)
+					}
 				}
 			}
 		}

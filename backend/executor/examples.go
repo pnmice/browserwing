@@ -18,7 +18,7 @@ func ExampleBasicNavigation() error {
 	if err := browserMgr.Start(ctx); err != nil {
 		return fmt.Errorf("failed to start browser: %w", err)
 	}
-	defer browserMgr.Stop()
+	defer func() { _ = browserMgr.Stop() }()
 
 	// 创建 Executor
 	executor := NewExecutor(browserMgr)
@@ -41,7 +41,7 @@ func ExampleClickAndType() error {
 	if err := browserMgr.Start(ctx); err != nil {
 		return err
 	}
-	defer browserMgr.Stop()
+	defer func() { _ = browserMgr.Stop() }()
 
 	executor := NewExecutor(browserMgr)
 
@@ -77,7 +77,7 @@ func ExampleSemanticTree() error {
 	if err := browserMgr.Start(ctx); err != nil {
 		return err
 	}
-	defer browserMgr.Stop()
+	defer func() { _ = browserMgr.Stop() }()
 
 	executor := NewExecutor(browserMgr)
 
@@ -126,7 +126,7 @@ func ExampleSmartInteraction() error {
 	if err := browserMgr.Start(ctx); err != nil {
 		return err
 	}
-	defer browserMgr.Stop()
+	defer func() { _ = browserMgr.Stop() }()
 
 	executor := NewExecutor(browserMgr)
 
@@ -165,7 +165,7 @@ func ExampleDataExtraction() error {
 	if err := browserMgr.Start(ctx); err != nil {
 		return err
 	}
-	defer browserMgr.Stop()
+	defer func() { _ = browserMgr.Stop() }()
 
 	executor := NewExecutor(browserMgr)
 
@@ -203,7 +203,7 @@ func ExampleBatchOperations() error {
 	if err := browserMgr.Start(ctx); err != nil {
 		return err
 	}
-	defer browserMgr.Stop()
+	defer func() { _ = browserMgr.Stop() }()
 
 	executor := NewExecutor(browserMgr)
 
@@ -270,7 +270,7 @@ func ExampleWaitAndScreenshot() error {
 	if err := browserMgr.Start(ctx); err != nil {
 		return err
 	}
-	defer browserMgr.Stop()
+	defer func() { _ = browserMgr.Stop() }()
 
 	executor := NewExecutor(browserMgr)
 
@@ -309,7 +309,7 @@ func ExampleFormFilling() error {
 	if err := browserMgr.Start(ctx); err != nil {
 		return err
 	}
-	defer browserMgr.Stop()
+	defer func() { _ = browserMgr.Stop() }()
 
 	executor := NewExecutor(browserMgr)
 
@@ -349,7 +349,7 @@ func ExampleAdvancedNavigation() error {
 	if err := browserMgr.Start(ctx); err != nil {
 		return err
 	}
-	defer browserMgr.Stop()
+	defer func() { _ = browserMgr.Stop() }()
 
 	executor := NewExecutor(browserMgr)
 
@@ -391,7 +391,7 @@ func ExampleScrolling() error {
 	if err := browserMgr.Start(ctx); err != nil {
 		return err
 	}
-	defer browserMgr.Stop()
+	defer func() { _ = browserMgr.Stop() }()
 
 	executor := NewExecutor(browserMgr)
 

@@ -498,7 +498,6 @@ func (p *Player) StartDownloadListener(ctx context.Context, browser *rod.Browser
 				// 尝试查找类似的文件
 				if actualFile := p.findSimilarFile(fileName); actualFile != "" {
 					fullPath = filepath.Join(p.downloadPath, actualFile)
-					fileName = actualFile
 					logger.Info(ctx, "File was renamed by browser: %s -> %s", downloadMap[e.GUID], actualFile)
 				}
 			}
@@ -2230,7 +2229,7 @@ func (p *Player) executeKeyboard(ctx context.Context, page *rod.Page, action mod
 			}
 			err = keyboard.Type(input.KeyA)
 			if err != nil {
-				keyboard.Release(input.ControlLeft)
+				_ = keyboard.Release(input.ControlLeft)
 				return fmt.Errorf("failed to press A: %w", err)
 			}
 			err = keyboard.Release(input.ControlLeft)
@@ -2260,7 +2259,7 @@ func (p *Player) executeKeyboard(ctx context.Context, page *rod.Page, action mod
 			}
 			err = keyboard.Type(input.KeyC)
 			if err != nil {
-				keyboard.Release(input.ControlLeft)
+				_ = keyboard.Release(input.ControlLeft)
 				return fmt.Errorf("failed to press C: %w", err)
 			}
 			err = keyboard.Release(input.ControlLeft)
@@ -2312,7 +2311,7 @@ func (p *Player) executeKeyboard(ctx context.Context, page *rod.Page, action mod
 				}
 				err = keyboard.Type(input.KeyV)
 				if err != nil {
-					keyboard.Release(input.MetaLeft)
+					_ = keyboard.Release(input.MetaLeft)
 					return fmt.Errorf("failed to press V: %w", err)
 				}
 				err = keyboard.Release(input.MetaLeft)
@@ -2540,7 +2539,7 @@ func (p *Player) executeKeyboard(ctx context.Context, page *rod.Page, action mod
 			}
 			err = keyboard.Type(input.KeyV)
 			if err != nil {
-				keyboard.Release(input.ControlLeft)
+				_ = keyboard.Release(input.ControlLeft)
 				return fmt.Errorf("failed to press V: %w", err)
 			}
 			err = keyboard.Release(input.ControlLeft)

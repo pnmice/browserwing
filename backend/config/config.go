@@ -76,11 +76,11 @@ func Load(path string) (*Config, error) {
 		// 如果本地不存在 data 和 log 目录，则创建
 		_, err := os.Stat("./data")
 		if os.IsNotExist(err) {
-			os.Mkdir("./data", 0o755)
+			_ = os.Mkdir("./data", 0o755)
 		}
 		_, err = os.Stat("./log")
 		if os.IsNotExist(err) {
-			os.Mkdir("./log", 0o755)
+			_ = os.Mkdir("./log", 0o755)
 		}
 		// 返回默认配置
 		defConfig := &Config{
@@ -109,7 +109,7 @@ func Load(path string) (*Config, error) {
 		if os.IsNotExist(err) {
 			cfgData, err := toml.Marshal(defConfig)
 			if err == nil {
-				os.WriteFile(path, cfgData, 0o644)
+				_ = os.WriteFile(path, cfgData, 0o644)
 			}
 		}
 		return defConfig, nil

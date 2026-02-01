@@ -277,7 +277,7 @@ func (m *Manager) Start(ctx context.Context) error {
 			// 如果是 SingletonLock 错误，尝试清理并给出提示
 			if m.config.Browser != nil && m.config.Browser.UserDataDir != "" && strings.Contains(errMsg, "SingletonLock") {
 				logger.Error(ctx, "Browser launch failed due to SingletonLock, attempting cleanup...")
-				m.cleanupSingletonLock(ctx, m.config.Browser.UserDataDir)
+				_ = m.cleanupSingletonLock(ctx, m.config.Browser.UserDataDir)
 				return fmt.Errorf("failed to launch browser (SingletonLock issue): %w\nTip: The lock files have been cleaned up. Please try starting the browser again", err)
 			}
 
@@ -1685,7 +1685,7 @@ func (m *Manager) startInstanceInternal(ctx context.Context, instanceID string) 
 		if err == nil {
 			downloadPath = absDownloadPath + "/downloads"
 		}
-		os.MkdirAll(downloadPath, 0o755)
+		_ = os.MkdirAll(downloadPath, 0o755)
 		m.downloadPath = downloadPath
 		m.recorder.SetDownloadPath(downloadPath)
 	}

@@ -30,4 +30,7 @@ bin
 
 official
 
-test
+/test
+coverage/
+coverage.out
+coverage.html

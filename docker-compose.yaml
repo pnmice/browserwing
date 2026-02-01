@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  browserwing:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: browserwing
+    ports:
+      - "8080:8080"
+    volumes:
+      # Persist database
+      - browserwing-data:/app/data
+      # Persist logs
+      - browserwing-logs:/app/logs
+      # Persist browser user data (cookies, sessions, etc.)
+      - browserwing-chrome-data:/app/chrome_user_data
+      # Persist assets
+      - browserwing-assets:/app/assets
+      # Mount custom config (optional)
+      # - ./config.toml:/app/config.toml:ro
+    environment:
+      # Server configuration
+      - HOST=0.0.0.0
+      - PORT=8080
+      # Browser configuration (headless mode for container)
+      - BROWSER_HEADLESS=true
+    # Shared memory size for Chrome (prevents crashes)
+    shm_size: 2gb
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+        reservations:
+          memory: 1G
+          cpus: '0.5'
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Optional: Use external Chrome service instead of built-in Chromium
+  # Uncomment this service and set BROWSER_CONTROL_URL in browserwing service
+  # chrome:
+  #   image: zenika/alpine-chrome:latest
+  #   container_name: browserwing-chrome
+  #   ports:
+  #     - "9222:9222"
+  #   shm_size: 2gb
+  #   command:
+  #     - --no-sandbox
+  #     - --disable-dev-shm-usage
+  #     - --remote-debugging-address=0.0.0.0
+  #     - --remote-debugging-port=9222
+  #     - --no-first-run
+  #   restart: unless-stopped
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 2G
+  #         cpus: '2.0'
+
+volumes:
+  browserwing-data:
+    driver: local
+  browserwing-logs:
+    driver: local
+  browserwing-chrome-data:
+    driver: local
+  browserwing-assets:
+    driver: local

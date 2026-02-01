@@ -1,0 +1,48 @@
+# Git
+.git
+.gitignore
+
+# Build outputs
+build/
+bin/
+*.exe
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Frontend development files
+frontend/node_modules/
+frontend/dist/
+
+# Backend development files
+backend/data/
+backend/logs/
+backend/chrome_user_data/
+backend/dist/
+
+# Temporary files
+*.log
+*.tmp
+.DS_Store
+
+# Docker
+Dockerfile*
+docker-compose*.yaml
+docker-compose*.yml
+.dockerignore
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Test files
+*_test.go
+coverage.out
+
+# Local config files
+config.toml
+*.local.toml
